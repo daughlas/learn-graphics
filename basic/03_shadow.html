@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+<canvas id="canvas" width="600" height="600" style="background: black"></canvas>
+<script>
+  var canvas = document.getElementById('canvas')
+  var ctx= canvas.getContext('2d')
+
+  {
+    ctx.beginPath();
+    ctx.arc(200, 200, 100, 0, 2* Math.PI, false);
+    ctx.fillStyle="white";
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = 'white';
+    ctx.fill();
+  }
+</script>
+</body>
+</html>

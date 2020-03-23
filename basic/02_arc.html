@@ -12,14 +12,13 @@
   var ctx= canvas.getContext('2d')
 
   {
-    // 画一个园
     ctx.beginPath();
-    ctx.arc(300, 300, 150, 0, Math.PI / 2, true);
+    ctx.arc(100, 100, 50, 0, Math.PI * 0.5, false);
     ctx.closePath();
-    ctx.fillStyle = 'rgb(255, 255, 255)';
-    ctx.fill();
-    // ctx.strokeStyle = 'rgb(255, 255, 255)';
-    // ctx.stroke();
+    // ctx.fillStyle = 'rgb(255, 255, 255)';
+    // ctx.fill();
+    ctx.strokeStyle = 'rgb(255, 255, 255)';
+    ctx.stroke();
   }
 </script>
 </body>
