@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>粒子向上飘啊飘</title>
+  <style>
+    html, body {
+      margin: 0;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      cursor: none;
+      background: black;
+    }
+  </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+  var canvas = document.getElementById('canvas');
+  var ctx = canvas.getContext('2d');
+  var WIDTH = document.documentElement.clientWidth;
+  var HEIGHT = document.documentElement.clientHeight;
+  var round = [];
+  canvas.width = WIDTH
+  canvas.height = HEIGHT
+
+
+  function RoundItem(context,index, x, y) {
+    this.ctx = context
+    this.index = index;
+    this.x = x;
+    this.y = y;
+    this.r = Math.random()* 2 + 1;
+    this.alpha = (Math.floor(Math.random() * 10) + 1) / 10 / 2;
+    this.color = "rgba(255, 255, 255," + this.alpha + ")";
+  }
+
+  RoundItem.prototype.draw = function () {
+    this.ctx.fillStyle = this.color;
+    this.ctx.shadowBlur = this.r * 2
+    this.ctx.beginPath();
+    this.ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
+    this.ctx.closePath();
+    this.ctx.fill();
+  }
+
+  RoundItem.prototype.move = function() {
+    this.y -= 0.55;
+    if (this.y <= -3 ) {
+      this.y = HEIGHT + 3;
+    }
+    this.draw();
+  }
+
+  function init(initRoundPopulation) {
+    for(var i = 0; i < initRoundPopulation; i++) {
+      var x = Math.floor(Math.random() * WIDTH)
+      var y = Math.floor(Math.random() * HEIGHT)
+      round[i] = new RoundItem(ctx, i, x, y);
+      round[i].draw();
+    }
+    animate();
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    for (var i in round) {
+      round[i].move()
+    }
+    // TODO
+    requestAnimationFrame(animate)
+  }
+
+  init(100);
+
+</script>
+</body>
+</html>
