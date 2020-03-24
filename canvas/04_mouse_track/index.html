@@ -29,6 +29,58 @@
   canvas.width = WIDTH
   canvas.height = HEIGHT
 
+  function RoundItem(x, y, r) {
+    this.mouseX = x;
+    this.mouseY = y;
+    this.r = r;
+    this.o = 1
+  }
+
+  function addEventListener() {
+    window.onmousemove = function(event) {
+     
+      mouseX = event.clientX;
+      mouseY = event.clientY;
+      round_arr.push(new RoundItem(mouseX, mouseY, para.r));
+    }
+  }
+  
+
+  function animate() {
+    if (!para.color) {
+      color += .1;
+      color2 = 'hsl(' + color + ', 100%, 80%)';
+    }
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    for (var i = 0; i < round_arr.length; i++) {
+      let round = round_arr[i];
+      ctx.fillStyle = color2;
+      ctx.beginPath();
+      ctx.arc(round.mouseX, round.mouseY, round.r, 0, Math.PI * 2, false);
+      ctx.closePath();
+      ctx.fill();
+      round.r += para.r;
+      round.o -= para.o;
+      if (round.o <= 0) {
+        round_arr.splice(i, 1);
+        i--;
+      }
+    }
+    window.requestAnimationFrame(animate);
+  }
+
+  function init() {
+    if (para.color) {
+      color2 = para.color;
+    } else {
+      color = Math.random() * 360;
+    }
+    addEventListener();
+    animate()
+  }
+
+  init();
+
 </script>
 </body>
 </html>

@@ -22,9 +22,11 @@
   var ctx = canvas.getContext('2d');
   var WIDTH = document.documentElement.clientWidth;
   var HEIGHT = document.documentElement.clientHeight;
-  var round = [];
-  canvas.width = WIDTH
+  var round_arr = [];
+  var useCache = true;
+  canvas.width = WIDTH;
   canvas.height = HEIGHT
+
 
 
   function RoundItem(context,index, x, y) {
@@ -35,15 +37,30 @@
     this.r = Math.random()* 2 + 1;
     this.alpha = (Math.floor(Math.random() * 10) + 1) / 10 / 2;
     this.color = "rgba(255, 255, 255," + this.alpha + ")";
+
+    // 离屏渲染优化
+    this.useCache = useCache;
+    this.cacheCanvas = document.createElement('canvas');
+    this.cacheCtx = this.cacheCanvas.getContext('2d');
+    this.cacheCtx.width = 6 * this.r;
+    this.cacheCtx.height = 6 * this.r;
+    if (useCache) {
+      this.cache();
+    }
   }
 
   RoundItem.prototype.draw = function () {
-    this.ctx.fillStyle = this.color;
-    this.ctx.shadowBlur = this.r * 2
-    this.ctx.beginPath();
-    this.ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
-    this.ctx.closePath();
-    this.ctx.fill();
+    if (!useCache) {
+      this.ctx.fillStyle = this.color;
+      this.ctx.shadowBlur = this.r * 2
+      this.ctx.beginPath();
+      this.ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
+      this.ctx.closePath();
+      this.ctx.fill();
+    } else {
+      this.ctx.drawImage(this.cacheCanvas, this.x - this. r, this.y - this.r)
+    }
+    
   }
 
   RoundItem.prototype.move = function() {
@@ -54,20 +71,32 @@
     this.draw();
   }
 
+  RoundItem.prototype.cache = function() {
+    this.cacheCtx.save();
+    this.cacheCtx.fillStyle = this.color;
+    this.cacheCtx.shadowColor = 'white';
+    this.cacheCtx.shadowBlur = this.r * 2;
+    this.cacheCtx.beginPath();
+    this.cacheCtx.arc(this.r*3, this.r*3, this.r, 0, 2 * Math.PI, false);
+    this.cacheCtx.closePath();
+    this.cacheCtx.fill();
+    this.cacheCtx.restore();
+  }
+
   function init(initRoundPopulation) {
     for(var i = 0; i < initRoundPopulation; i++) {
       var x = Math.floor(Math.random() * WIDTH)
       var y = Math.floor(Math.random() * HEIGHT)
-      round[i] = new RoundItem(ctx, i, x, y);
-      round[i].draw();
+      round_arr[i] = new RoundItem(ctx, i, x, y);
+      round_arr[i].draw();
     }
     animate();
   }
 
   function animate() {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
-    for (var i in round) {
-      round[i].move()
+    for (var i in round_arr) {
+      round_arr[i].move()
     }
     // TODO
     requestAnimationFrame(animate)
